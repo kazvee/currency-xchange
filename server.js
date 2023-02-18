@@ -10,7 +10,7 @@ const PORT = process.env.PORT;
 app.get('/currency', (req, res) => {
   const options = {
     method: 'GET',
-    url: process.env.ExchangeRate_API_URL,
+    url: process.env.ExchangeRate_API_URL, // commented out so I don't call the API unnecessarily
   };
 
   axios
