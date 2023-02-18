@@ -4,9 +4,63 @@ const getExchangeRateData = () => {
   const baseCurrency = 'CAD';
   const currenciesToCheck = ['CAD', 'USD', 'ISK', 'EUR', 'ILS'];
 
+  const cachedCurrencyData = localStorage.getItem('cachedCurrencyData');
+  if (cachedCurrencyData) {
+    const data = JSON.parse(cachedCurrencyData);
+
+    console.log('Retrieving data from local storage! 💾', data);
+
+    let CADcurrentRate = 0;
+    let USDcurrentRate = 0;
+    let ISKcurrentRate = 0;
+    let EURcurrentRate = 0;
+    let ILScurrentRate = 0;
+
+    CADcurrentRate = data.conversion_rates['CAD'] || CADcurrentRate;
+    USDcurrentRate = data.conversion_rates['USD'] || USDcurrentRate;
+    ISKcurrentRate = data.conversion_rates['ISK'] || ISKcurrentRate;
+    EURcurrentRate = data.conversion_rates['EUR'] || EURcurrentRate;
+    ILScurrentRate = data.conversion_rates['ILS'] || ILScurrentRate;
+
+    const cachedTimestamp = data.timestamp;
+    const currentTimestamp = Date.now();
+
+    const hoursSinceLastUpdate =
+      (currentTimestamp - cachedTimestamp) / (1000 * 60 * 60);
+
+    if (hoursSinceLastUpdate < 4) {
+      console.log('Using cached data, since it is less than 4 hours old! 🐣');
+      return Promise.resolve({
+        CADcurrentRate,
+        USDcurrentRate,
+        ISKcurrentRate,
+        EURcurrentRate,
+        ILScurrentRate,
+      });
+    } else {
+      console.log(
+        'Cached data in local storage is over 4 hours old, getting fresh data via API call! ☎️'
+      );
+    }
+  } else {
+    console.log('Data is not available in local storage. ☹️');
+  }
+
+  console.log('Data is being fetched from the API! 🫡');
+
   return fetch('http://localhost:8000/currency')
     .then((response) => response.json())
     .then((data) => {
+      data.timestamp = Date.now();
+      localStorage.setItem('cachedCurrencyData', JSON.stringify(data));
+      console.log('Data is cached in local storage! 💾');
+
+      let CADcurrentRate = 0;
+      let USDcurrentRate = 0;
+      let ISKcurrentRate = 0;
+      let EURcurrentRate = 0;
+      let ILScurrentRate = 0;
+
       // Check if the conversion_rates object exists in the response
       if (data.hasOwnProperty('conversion_rates')) {
         // Get the list of currency codes
@@ -25,25 +79,21 @@ const getExchangeRateData = () => {
             );
           }
         });
-      } else {
-        console.error(
-          'Did not find conversion_rates object in the response! ☹️'
-        );
+
+        CADcurrentRate = data.conversion_rates['CAD'] || CADcurrentRate;
+        USDcurrentRate = data.conversion_rates['USD'] || USDcurrentRate;
+        ISKcurrentRate = data.conversion_rates['ISK'] || ISKcurrentRate;
+        EURcurrentRate = data.conversion_rates['EUR'] || EURcurrentRate;
+        ILScurrentRate = data.conversion_rates['ILS'] || ILScurrentRate;
+
+        return {
+          CADcurrentRate,
+          USDcurrentRate,
+          ISKcurrentRate,
+          EURcurrentRate,
+          ILScurrentRate,
+        };
       }
-
-      CADcurrentRate = data.conversion_rates['CAD'];
-      USDcurrentRate = data.conversion_rates['USD'];
-      ISKcurrentRate = data.conversion_rates['ISK'];
-      EURcurrentRate = data.conversion_rates['EUR'];
-      ILScurrentRate = data.conversion_rates['ILS'];
-
-      return {
-        CADcurrentRate,
-        USDcurrentRate,
-        ISKcurrentRate,
-        EURcurrentRate,
-        ILScurrentRate,
-      };
     })
     .catch((error) => console.error('An error occurred! ☹️', error));
 };
