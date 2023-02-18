@@ -26,3 +26,8 @@ h1 {
   background-color: #537ec5;
   text-align: left;
 }
+
+.currency th,
+.currency td {
+  padding-right: 75px;
+}
