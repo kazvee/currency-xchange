@@ -2,7 +2,7 @@ const tableBody = document.getElementById('table-body');
 
 const getExchangeRateData = () => {
   const baseCurrency = 'CAD';
-  const currenciesToCheck = ['CAD', 'USD', 'ISK', 'EUR', 'ILS'];
+  const currenciesToCheck = ['CAD', 'USD', 'ISK', 'GBP', 'EUR', 'ILS'];
 
   const cachedCurrencyData = localStorage.getItem('cachedCurrencyData');
   if (cachedCurrencyData) {
@@ -13,12 +13,14 @@ const getExchangeRateData = () => {
     let CADcurrentRate = 0;
     let USDcurrentRate = 0;
     let ISKcurrentRate = 0;
+    let GBPcurrentRate = 0;
     let EURcurrentRate = 0;
     let ILScurrentRate = 0;
 
     CADcurrentRate = data.conversion_rates['CAD'] || CADcurrentRate;
     USDcurrentRate = data.conversion_rates['USD'] || USDcurrentRate;
     ISKcurrentRate = data.conversion_rates['ISK'] || ISKcurrentRate;
+    GBPcurrentRate = data.conversion_rates['GBP'] || GBPcurrentRate;
     EURcurrentRate = data.conversion_rates['EUR'] || EURcurrentRate;
     ILScurrentRate = data.conversion_rates['ILS'] || ILScurrentRate;
 
@@ -34,6 +36,7 @@ const getExchangeRateData = () => {
         CADcurrentRate,
         USDcurrentRate,
         ISKcurrentRate,
+        GBPcurrentRate,
         EURcurrentRate,
         ILScurrentRate,
       });
@@ -58,17 +61,14 @@ const getExchangeRateData = () => {
       let CADcurrentRate = 0;
       let USDcurrentRate = 0;
       let ISKcurrentRate = 0;
+      let GBPcurrentRate = 0;
       let EURcurrentRate = 0;
       let ILScurrentRate = 0;
 
-      // Check if the conversion_rates object exists in the response
       if (data.hasOwnProperty('conversion_rates')) {
-        // Get the list of currency codes
         const currencyCodes = Object.keys(data.conversion_rates);
 
-        // Loop through the currenciesToCheck array
         currenciesToCheck.forEach((currency) => {
-          // Check if the currency is present in the list of currency codes
           if (currencyCodes.includes(currency)) {
             console.log(
               `1 ${baseCurrency} is equal to ${data.conversion_rates[currency]} in ${currency}! 💸`
@@ -83,6 +83,7 @@ const getExchangeRateData = () => {
         CADcurrentRate = data.conversion_rates['CAD'] || CADcurrentRate;
         USDcurrentRate = data.conversion_rates['USD'] || USDcurrentRate;
         ISKcurrentRate = data.conversion_rates['ISK'] || ISKcurrentRate;
+        GBPcurrentRate = data.conversion_rates['GBP'] || GBPcurrentRate;
         EURcurrentRate = data.conversion_rates['EUR'] || EURcurrentRate;
         ILScurrentRate = data.conversion_rates['ILS'] || ILScurrentRate;
 
@@ -90,6 +91,7 @@ const getExchangeRateData = () => {
           CADcurrentRate,
           USDcurrentRate,
           ISKcurrentRate,
+          GBPcurrentRate,
           EURcurrentRate,
           ILScurrentRate,
         };
@@ -117,7 +119,7 @@ getExchangeRateData().then((rates) => {
 
   usdIcon.textContent = '';
   usdFrom.textContent = 'CAD 1';
-  usdTo.textContent = '🧮';
+  usdTo.textContent = '💰';
   usdRate.textContent = `USD ${rates.USDcurrentRate}`;
 
   usdRow.append(usdIcon, usdFrom, usdTo, usdRate);
@@ -138,6 +140,21 @@ getExchangeRateData().then((rates) => {
   iskRow.append(iskIcon, iskFrom, iskTo, iskRate);
 
   tableBody.append(iskRow);
+
+  const gbpRow = document.createElement('tr');
+  const gbpIcon = document.createElement('td');
+  const gbpFrom = document.createElement('td');
+  const gbpTo = document.createElement('td');
+  const gbpRate = document.createElement('td');
+
+  gbpIcon.textContent = '';
+  gbpFrom.textContent = 'CAD 1';
+  gbpTo.textContent = '🧮';
+  gbpRate.textContent = `GBP ${rates.GBPcurrentRate}`;
+
+  gbpRow.append(gbpIcon, gbpFrom, gbpTo, gbpRate);
+
+  tableBody.append(gbpRow);
 
   const eurRow = document.createElement('tr');
   const eurIcon = document.createElement('td');
