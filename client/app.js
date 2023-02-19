@@ -101,6 +101,15 @@ const getExchangeRateData = () => {
 };
 
 getExchangeRateData().then((rates) => {
+  const emojis = ['💰', '💱', '🧮', '💸', '🟰'];
+  function shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+  }
+  shuffle(emojis);
+
   const titleRow = document.createElement('tr');
   const titleIcon = document.createElement('td');
   const title1 = document.createElement('td');
@@ -119,7 +128,7 @@ getExchangeRateData().then((rates) => {
 
   usdIcon.textContent = '';
   usdFrom.textContent = 'CAD 1';
-  usdTo.textContent = '💰';
+  usdTo.textContent = emojis[0];
   usdRate.textContent = `USD ${rates.USDcurrentRate}`;
 
   usdRow.append(usdIcon, usdFrom, usdTo, usdRate);
@@ -134,7 +143,7 @@ getExchangeRateData().then((rates) => {
 
   iskIcon.textContent = '';
   iskFrom.textContent = 'CAD 1';
-  iskTo.textContent = '💱';
+  iskTo.textContent = emojis[1];
   iskRate.textContent = `ISK ${rates.ISKcurrentRate}`;
 
   iskRow.append(iskIcon, iskFrom, iskTo, iskRate);
@@ -149,7 +158,7 @@ getExchangeRateData().then((rates) => {
 
   gbpIcon.textContent = '';
   gbpFrom.textContent = 'CAD 1';
-  gbpTo.textContent = '🧮';
+  gbpTo.textContent = emojis[2];
   gbpRate.textContent = `GBP ${rates.GBPcurrentRate}`;
 
   gbpRow.append(gbpIcon, gbpFrom, gbpTo, gbpRate);
@@ -164,7 +173,7 @@ getExchangeRateData().then((rates) => {
 
   eurIcon.textContent = '';
   eurFrom.textContent = 'CAD 1';
-  eurTo.textContent = '💸';
+  eurTo.textContent = emojis[3];
   eurRate.textContent = `EUR ${rates.EURcurrentRate}`;
 
   eurRow.append(eurIcon, eurFrom, eurTo, eurRate);
@@ -179,7 +188,7 @@ getExchangeRateData().then((rates) => {
 
   ilsIcon.textContent = '';
   ilsFrom.textContent = 'CAD 1';
-  ilsTo.textContent = '🟰';
+  ilsTo.textContent = emojis[4];
   ilsRate.textContent = `ILS ${rates.ILScurrentRate}`;
 
   ilsRow.append(ilsIcon, ilsFrom, ilsTo, ilsRate);
