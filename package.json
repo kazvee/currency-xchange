@@ -1,5 +1,5 @@
 {
-  "name": "currency-exchange-backend",
+  "name": "currency-xchange",
   "version": "1.0.0",
   "description": "",
   "main": "server.js",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/karvok/currency-exchange-backend.git"
+    "url": "git+https://github.com/karvok/currency-xchange.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/karvok/currency-exchange-backend/issues"
+    "url": "https://github.com/karvok/currency-xchange/issues"
   },
-  "homepage": "https://github.com/karvok/currency-exchange-backend#readme",
+  "homepage": "https://github.com/karvok/currency-xchange#readme",
   "dependencies": {
     "axios": "^1.3.2",
     "cors": "^2.8.5",
