@@ -51,7 +51,7 @@ const getExchangeRateData = () => {
 
   console.log('Data is being fetched from the API! 🫡');
 
-  return fetch('http://localhost:8000/currency')
+  return fetch('currency-xchange-demo.vercel.app/currency')
     .then((response) => response.json())
     .then((data) => {
       data.timestamp = Date.now();
