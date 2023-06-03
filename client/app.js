@@ -1,4 +1,6 @@
 const tableBody = document.getElementById('table-body');
+const footer = document.getElementById('footer');
+const startTime = performance.now(); // Start measuring execution time
 
 const getExchangeRateData = () => {
   const baseCurrency = 'CAD';
@@ -10,19 +12,21 @@ const getExchangeRateData = () => {
 
     console.log('Retrieving data from local storage! 💾', data);
 
-    let CADcurrentRate = 0;
-    let USDcurrentRate = 0;
-    let ISKcurrentRate = 0;
-    let GBPcurrentRate = 0;
-    let EURcurrentRate = 0;
-    let ILScurrentRate = 0;
+    let rates = {
+      CADcurrentRate: 0,
+      USDcurrentRate: 0,
+      ISKcurrentRate: 0,
+      GBPcurrentRate: 0,
+      EURcurrentRate: 0,
+      ILScurrentRate: 0,
+    };
 
-    CADcurrentRate = data.conversion_rates['CAD'] || CADcurrentRate;
-    USDcurrentRate = data.conversion_rates['USD'] || USDcurrentRate;
-    ISKcurrentRate = data.conversion_rates['ISK'] || ISKcurrentRate;
-    GBPcurrentRate = data.conversion_rates['GBP'] || GBPcurrentRate;
-    EURcurrentRate = data.conversion_rates['EUR'] || EURcurrentRate;
-    ILScurrentRate = data.conversion_rates['ILS'] || ILScurrentRate;
+    rates.CADcurrentRate = data.conversion_rates?.CAD || rates.CADcurrentRate;
+    rates.USDcurrentRate = data.conversion_rates?.USD || rates.USDcurrentRate;
+    rates.ISKcurrentRate = data.conversion_rates?.ISK || rates.ISKcurrentRate;
+    rates.GBPcurrentRate = data.conversion_rates?.GBP || rates.GBPcurrentRate;
+    rates.EURcurrentRate = data.conversion_rates?.EUR || rates.EURcurrentRate;
+    rates.ILScurrentRate = data.conversion_rates?.ILS || rates.ILScurrentRate;
 
     const cachedTimestamp = data.timestamp;
     const currentTimestamp = Date.now();
@@ -32,14 +36,7 @@ const getExchangeRateData = () => {
 
     if (hoursSinceLastUpdate < 4) {
       console.log('Using cached data, since it is less than 4 hours old! 🐣');
-      return Promise.resolve({
-        CADcurrentRate,
-        USDcurrentRate,
-        ISKcurrentRate,
-        GBPcurrentRate,
-        EURcurrentRate,
-        ILScurrentRate,
-      });
+      return Promise.resolve(rates);
     } else {
       console.log(
         'Cached data in local storage is over 4 hours old, getting fresh data via API call! ☎️'
@@ -51,19 +48,21 @@ const getExchangeRateData = () => {
 
   console.log('Data is being fetched from the API! 🫡');
 
-  return fetch('http://localhost:8000/currency')
+  return fetch(`http://localhost:8000/currency`)
     .then((response) => response.json())
     .then((data) => {
       data.timestamp = Date.now();
       localStorage.setItem('cachedCurrencyData', JSON.stringify(data));
       console.log('Data is cached in local storage! 💾');
 
-      let CADcurrentRate = 0;
-      let USDcurrentRate = 0;
-      let ISKcurrentRate = 0;
-      let GBPcurrentRate = 0;
-      let EURcurrentRate = 0;
-      let ILScurrentRate = 0;
+      let rates = {
+        CADcurrentRate: 0,
+        USDcurrentRate: 0,
+        ISKcurrentRate: 0,
+        GBPcurrentRate: 0,
+        EURcurrentRate: 0,
+        ILScurrentRate: 0,
+      };
 
       if (data.hasOwnProperty('conversion_rates')) {
         const currencyCodes = Object.keys(data.conversion_rates);
@@ -80,21 +79,20 @@ const getExchangeRateData = () => {
           }
         });
 
-        CADcurrentRate = data.conversion_rates['CAD'] || CADcurrentRate;
-        USDcurrentRate = data.conversion_rates['USD'] || USDcurrentRate;
-        ISKcurrentRate = data.conversion_rates['ISK'] || ISKcurrentRate;
-        GBPcurrentRate = data.conversion_rates['GBP'] || GBPcurrentRate;
-        EURcurrentRate = data.conversion_rates['EUR'] || EURcurrentRate;
-        ILScurrentRate = data.conversion_rates['ILS'] || ILScurrentRate;
+        rates.CADcurrentRate =
+          data.conversion_rates?.CAD || rates.CADcurrentRate;
+        rates.USDcurrentRate =
+          data.conversion_rates?.USD || rates.USDcurrentRate;
+        rates.ISKcurrentRate =
+          data.conversion_rates?.ISK || rates.ISKcurrentRate;
+        rates.GBPcurrentRate =
+          data.conversion_rates?.GBP || rates.GBPcurrentRate;
+        rates.EURcurrentRate =
+          data.conversion_rates?.EUR || rates.EURcurrentRate;
+        rates.ILScurrentRate =
+          data.conversion_rates?.ILS || rates.ILScurrentRate;
 
-        return {
-          CADcurrentRate,
-          USDcurrentRate,
-          ISKcurrentRate,
-          GBPcurrentRate,
-          EURcurrentRate,
-          ILScurrentRate,
-        };
+        return rates;
       }
     })
     .catch((error) => console.error('An error occurred! ☹️', error));
@@ -110,88 +108,42 @@ getExchangeRateData().then((rates) => {
   }
   shuffle(emojis);
 
-  const titleRow = document.createElement('tr');
-  const titleIcon = document.createElement('td');
-  const title1 = document.createElement('td');
-  const title2 = document.createElement('td');
-  const title3 = document.createElement('td');
+  const createTableRow = (fromCurrency, toCurrency, rate, emoji) => {
+    const row = document.createElement('tr');
+    const iconCell = document.createElement('td');
+    const fromCell = document.createElement('td');
+    const emojiCell = document.createElement('td');
+    const rateCell = document.createElement('td');
 
-  titleRow.append(titleIcon, title1, title2, title3);
+    iconCell.textContent = '';
+    fromCell.textContent = `${fromCurrency} 1`;
+    emojiCell.textContent = emoji;
+    rateCell.textContent = `${toCurrency} ${rate}`;
 
-  tableBody.append(titleRow);
+    row.appendChild(iconCell);
+    row.appendChild(fromCell);
+    row.appendChild(emojiCell);
+    row.appendChild(rateCell);
 
-  const usdRow = document.createElement('tr');
-  const usdIcon = document.createElement('td');
-  const usdFrom = document.createElement('td');
-  const usdTo = document.createElement('td');
-  const usdRate = document.createElement('td');
+    return row;
+  };
 
-  usdIcon.textContent = '';
-  usdFrom.textContent = 'CAD 1';
-  usdTo.textContent = emojis[0];
-  usdRate.textContent = `USD ${rates.USDcurrentRate}`;
+  const tableRows = [
+    createTableRow('CAD', 'USD', rates.USDcurrentRate, emojis[0]),
+    createTableRow('CAD', 'ISK', rates.ISKcurrentRate, emojis[1]),
+    createTableRow('CAD', 'GBP', rates.GBPcurrentRate, emojis[2]),
+    createTableRow('CAD', 'EUR', rates.EURcurrentRate, emojis[3]),
+    createTableRow('CAD', 'ILS', rates.ILScurrentRate, emojis[4]),
+  ];
 
-  usdRow.append(usdIcon, usdFrom, usdTo, usdRate);
+  tableRows.forEach((row) => {
+    tableBody.appendChild(row);
+  });
 
-  tableBody.append(usdRow);
+  const endTime = performance.now(); // Stop measuring execution time
+  const executionTime = endTime - startTime;
 
-  const iskRow = document.createElement('tr');
-  const iskIcon = document.createElement('td');
-  const iskFrom = document.createElement('td');
-  const iskTo = document.createElement('td');
-  const iskRate = document.createElement('td');
-
-  iskIcon.textContent = '';
-  iskFrom.textContent = 'CAD 1';
-  iskTo.textContent = emojis[1];
-  iskRate.textContent = `ISK ${rates.ISKcurrentRate}`;
-
-  iskRow.append(iskIcon, iskFrom, iskTo, iskRate);
-
-  tableBody.append(iskRow);
-
-  const gbpRow = document.createElement('tr');
-  const gbpIcon = document.createElement('td');
-  const gbpFrom = document.createElement('td');
-  const gbpTo = document.createElement('td');
-  const gbpRate = document.createElement('td');
-
-  gbpIcon.textContent = '';
-  gbpFrom.textContent = 'CAD 1';
-  gbpTo.textContent = emojis[2];
-  gbpRate.textContent = `GBP ${rates.GBPcurrentRate}`;
-
-  gbpRow.append(gbpIcon, gbpFrom, gbpTo, gbpRate);
-
-  tableBody.append(gbpRow);
-
-  const eurRow = document.createElement('tr');
-  const eurIcon = document.createElement('td');
-  const eurFrom = document.createElement('td');
-  const eurTo = document.createElement('td');
-  const eurRate = document.createElement('td');
-
-  eurIcon.textContent = '';
-  eurFrom.textContent = 'CAD 1';
-  eurTo.textContent = emojis[3];
-  eurRate.textContent = `EUR ${rates.EURcurrentRate}`;
-
-  eurRow.append(eurIcon, eurFrom, eurTo, eurRate);
-
-  tableBody.append(eurRow);
-
-  const ilsRow = document.createElement('tr');
-  const ilsIcon = document.createElement('td');
-  const ilsFrom = document.createElement('td');
-  const ilsTo = document.createElement('td');
-  const ilsRate = document.createElement('td');
-
-  ilsIcon.textContent = '';
-  ilsFrom.textContent = 'CAD 1';
-  ilsTo.textContent = emojis[4];
-  ilsRate.textContent = `ILS ${rates.ILScurrentRate}`;
-
-  ilsRow.append(ilsIcon, ilsFrom, ilsTo, ilsRate);
-
-  tableBody.append(ilsRow);
+  footer.textContent = `Execution time: ${executionTime.toFixed(
+    2
+  )} milliseconds! ⏱️`;
 });

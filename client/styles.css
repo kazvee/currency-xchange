@@ -31,3 +31,14 @@ h1 {
 .currency td {
   padding-right: 75px;
 }
+
+footer {
+  text-align: center;
+  font-size: 14px;
+  background-color: #537ec5;
+  padding: 5px;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+}

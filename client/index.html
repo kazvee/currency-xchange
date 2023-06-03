@@ -16,18 +16,24 @@
             <thead>
                 <tr>
                     <th></th>
-                    <th id="curr1">
-                    </th>
-                    <th id="curr2">
-                    </th>
-                    <th id="result">
-                    </th>
+                    <th></th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody id="table-body"></tbody>
         </table>
     </div>
-    <script src="app.js"></script>
+
+    <footer id="footer">Execution time: </footer>
+    <script async src="app.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const tableBody = document.getElementById('table-body');
+            const footer = document.getElementById('footer');
+
+            // Your remaining JavaScript code here...
+        });
+    </script>
 </body>
 
 </html>
