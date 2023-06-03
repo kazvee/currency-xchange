@@ -2,41 +2,22 @@ const tableBody = document.getElementById('table-body');
 const footer = document.getElementById('footer');
 const startTime = performance.now(); // Start measuring execution time
 
+const currenciesToCheck = ['USD', 'ISK', 'GBP', 'EUR', 'ILS']; // Define the currenciesToCheck array
+
 const getExchangeRateData = () => {
   const baseCurrency = 'CAD';
-  const currenciesToCheck = ['CAD', 'USD', 'ISK', 'GBP', 'EUR', 'ILS'];
 
   const cachedCurrencyData = localStorage.getItem('cachedCurrencyData');
   if (cachedCurrencyData) {
     const data = JSON.parse(cachedCurrencyData);
-
-    console.log('Retrieving data from local storage! 💾', data);
-
-    let rates = {
-      CADcurrentRate: 0,
-      USDcurrentRate: 0,
-      ISKcurrentRate: 0,
-      GBPcurrentRate: 0,
-      EURcurrentRate: 0,
-      ILScurrentRate: 0,
-    };
-
-    rates.CADcurrentRate = data.conversion_rates?.CAD || rates.CADcurrentRate;
-    rates.USDcurrentRate = data.conversion_rates?.USD || rates.USDcurrentRate;
-    rates.ISKcurrentRate = data.conversion_rates?.ISK || rates.ISKcurrentRate;
-    rates.GBPcurrentRate = data.conversion_rates?.GBP || rates.GBPcurrentRate;
-    rates.EURcurrentRate = data.conversion_rates?.EUR || rates.EURcurrentRate;
-    rates.ILScurrentRate = data.conversion_rates?.ILS || rates.ILScurrentRate;
-
     const cachedTimestamp = data.timestamp;
     const currentTimestamp = Date.now();
-
     const hoursSinceLastUpdate =
       (currentTimestamp - cachedTimestamp) / (1000 * 60 * 60);
 
     if (hoursSinceLastUpdate < 4) {
-      console.log('Using cached data, since it is less than 4 hours old! 🐣');
-      return Promise.resolve(rates);
+      console.log('Using cached data since it is less than 4 hours old! 🐣');
+      return Promise.resolve(data.conversion_rates || {});
     } else {
       console.log(
         'Cached data in local storage is over 4 hours old, getting fresh data via API call! ☎️'
@@ -48,54 +29,19 @@ const getExchangeRateData = () => {
 
   console.log('Data is being fetched from the API! 🫡');
 
-  return fetch(`http://localhost:8000/currency`)
+  return fetch('http://localhost:8000/currency')
     .then((response) => response.json())
     .then((data) => {
       data.timestamp = Date.now();
       localStorage.setItem('cachedCurrencyData', JSON.stringify(data));
       console.log('Data is cached in local storage! 💾');
 
-      let rates = {
-        CADcurrentRate: 0,
-        USDcurrentRate: 0,
-        ISKcurrentRate: 0,
-        GBPcurrentRate: 0,
-        EURcurrentRate: 0,
-        ILScurrentRate: 0,
-      };
-
-      if (data.hasOwnProperty('conversion_rates')) {
-        const currencyCodes = Object.keys(data.conversion_rates);
-
-        currenciesToCheck.forEach((currency) => {
-          if (currencyCodes.includes(currency)) {
-            console.log(
-              `1 ${baseCurrency} is equal to ${data.conversion_rates[currency]} in ${currency}! 💸`
-            );
-          } else {
-            console.error(
-              `${currency} is not found in the list of currency codes! ☹️`
-            );
-          }
-        });
-
-        rates.CADcurrentRate =
-          data.conversion_rates?.CAD || rates.CADcurrentRate;
-        rates.USDcurrentRate =
-          data.conversion_rates?.USD || rates.USDcurrentRate;
-        rates.ISKcurrentRate =
-          data.conversion_rates?.ISK || rates.ISKcurrentRate;
-        rates.GBPcurrentRate =
-          data.conversion_rates?.GBP || rates.GBPcurrentRate;
-        rates.EURcurrentRate =
-          data.conversion_rates?.EUR || rates.EURcurrentRate;
-        rates.ILScurrentRate =
-          data.conversion_rates?.ILS || rates.ILScurrentRate;
-
-        return rates;
-      }
+      return data.conversion_rates || {};
     })
-    .catch((error) => console.error('An error occurred! ☹️', error));
+    .catch((error) => {
+      console.error('An error occurred while fetching the data! ☹️', error);
+      return {};
+    });
 };
 
 getExchangeRateData().then((rates) => {
@@ -128,22 +74,19 @@ getExchangeRateData().then((rates) => {
     return row;
   };
 
-  const tableRows = [
-    createTableRow('CAD', 'USD', rates.USDcurrentRate, emojis[0]),
-    createTableRow('CAD', 'ISK', rates.ISKcurrentRate, emojis[1]),
-    createTableRow('CAD', 'GBP', rates.GBPcurrentRate, emojis[2]),
-    createTableRow('CAD', 'EUR', rates.EURcurrentRate, emojis[3]),
-    createTableRow('CAD', 'ILS', rates.ILScurrentRate, emojis[4]),
-  ];
-
-  tableRows.forEach((row) => {
+  const promises = currenciesToCheck.map((currency, index) => {
+    const emoji = emojis[index];
+    const rate = rates[currency] || 0;
+    const row = createTableRow('CAD', currency, rate, emoji);
     tableBody.appendChild(row);
   });
 
-  const endTime = performance.now(); // Stop measuring execution time
-  const executionTime = endTime - startTime;
+  Promise.all(promises).then(() => {
+    const endTime = performance.now(); // Stop measuring execution time
+    const executionTime = endTime - startTime;
 
-  footer.textContent = `Execution time: ${executionTime.toFixed(
-    2
-  )} milliseconds! ⏱️`;
+    footer.textContent = `Execution time: ${executionTime.toFixed(
+      2
+    )} milliseconds! ⏱️`;
+  });
 });
