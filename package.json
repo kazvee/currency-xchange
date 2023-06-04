@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/karvok/currency-xchange.git"
+    "url": "git+https://github.com/kazvee/currency-xchange.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/karvok/currency-xchange/issues"
+    "url": "https://github.com/kazvee/currency-xchange/issues"
   },
-  "homepage": "https://github.com/karvok/currency-xchange#readme",
+  "homepage": "https://github.com/kazvee/currency-xchange#readme",
   "dependencies": {
     "axios": "^1.3.2",
     "cors": "^2.8.5",

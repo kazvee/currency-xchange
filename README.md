@@ -31,4 +31,4 @@ Open `index.html` in a local browser to view the widget
 
 ### Disclaimer
 
-This project was built for educational purposes only. The exchange rate data shown is solely for illustrative and informational purposes. Any use of the data shown for actual financial transactions or decisions is explicitly forbidden.
+This project was built by for educational purposes only. The exchange rate data shown is solely for illustrative and informational purposes. Any use of the data shown for actual financial transactions or decisions is explicitly forbidden. 💸
